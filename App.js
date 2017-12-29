@@ -3,15 +3,17 @@ import {
     StyleSheet,
     Text,
     View,
-    TextInput
+    TextInput,
+    ScrollView
 } from 'react-native';
 
 export default class App extends React.Component {
   constructor() {
         super();
         this.state = {
-            myNumber: "0",
-            gradeArray: [{"grade":0,"value":0}]
+            calculated: false,
+            grade: "0/0",
+            gradeArray: [{"grade":"0","value":"0"}]
         };
   }
 
@@ -38,7 +40,7 @@ export default class App extends React.Component {
     const gradeArray = this.state.gradeArray;
     return gradeArray.map((object, i) => {
                 return (
-                    <View style={styles.row}>
+                    <View key={i} style={styles.row}>
                         <TextInput
                             placeholder="0"
                             keyboardType="numeric"
@@ -59,20 +61,48 @@ export default class App extends React.Component {
   addNewGrade() {
     let { gradeArray } = this.state;
     let newGrade = {
-        "grade": 0,
-        "value": 0
+        "grade": "0",
+        "value": "0"
     };
     gradeArray.push(newGrade);
 
     this.setState({ gradeArray: gradeArray });
   }
 
+  calculateGrade() {
+    let currentGrade = 0;
+    let totalPercent = 0;
+    const { gradeArray } = this.state;
+
+    gradeArray.forEach((object) => {
+        if (object.value > 0) {
+            currentGrade += object.grade / (object.value / 100);
+            totalPercent += object.value / 1;
+        }
+    });
+
+    this.setState({
+        calculated: true,
+        grade: currentGrade + " / " + totalPercent
+    });
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <Text>Test.</Text>
-        {this.renderTextInputs()}
-        <Text onPress={() => this.addNewGrade()}>Add a grade.</Text>
+      {(!this.state.calculated) &&
+        <ScrollView contentContainerStyle={{flexGrow: 1}}>
+            {this.renderTextInputs()}
+            <Text onPress={() => this.addNewGrade()}>Add a grade.</Text>
+            <Text onPress={() => this.calculateGrade()}>CALCULATE</Text>
+        </ScrollView>
+      }
+      {this.state.calculated &&
+        <View>
+            <Text>{this.state.grade}</Text>
+            <Text onPress={() => this.setState({calculated: false})}>Back</Text>
+       </View>
+      }
       </View>
     );
   }
@@ -85,10 +115,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    margin: 2,
   },
   row: {
     flexWrap: 'wrap',
-    alignItems: 'flex-start',
-    flexDirection:'row',
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    margin: 2,
   },
 });
