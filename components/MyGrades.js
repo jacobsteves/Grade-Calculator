@@ -153,7 +153,11 @@ class MyGrades extends React.Component {
         <ScrollView style={styles.scrollView}>
           {gradeLibrary.map((object, i) => {
               return (
-                <TouchableOpacity key={i} style={(i % 2 == 0) ? styles.rowEven : styles.rowOdd}>
+                <TouchableOpacity
+                  key={i}
+                  onPress={() => this.props.setEditMode(gradeLibrary[i].id)}
+                  style={(i % 2 == 0) ? styles.rowEven : styles.rowOdd}
+                  >
                   <Text>{gradeLibrary[i].class}: {gradeLibrary[i].currentGrade}%.</Text>
                 </TouchableOpacity>
               );

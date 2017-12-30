@@ -31,6 +31,11 @@ export function saveGrade(className, grade, arr) {
             try {
               // try to Increment numGrades, if error is thrown, do nothing and
               // rethrow that error
+              try {
+                AsyncStorage.setItem("numberOfGrades", (parseInt(id) + 1).toString());
+              } catch (error) {
+                throw error;
+              }
               dispatch(updateGradeLibrary(newClassObj));
               dispatch(updateSaveWarning("Save Successful"));
             } catch (error) {

@@ -25,6 +25,7 @@ export default class App extends React.Component {
   constructor() {
         super();
         this.state = {
+            editId: -1,
             sideMenuOpen: false,
             activeTab: 0,
         };
@@ -32,9 +33,16 @@ export default class App extends React.Component {
 
   setActiveTab(tab) {
       this.setState({
+        editId: -1,
         activeTab: tab,
         sideMenuOpen: false,
       });
+  }
+
+  setEditMode(id) {
+    console.log('id:', id);
+      this.setActiveTab(0);
+      this.setState({editId: id});
   }
 
   renderHeader() {
@@ -54,16 +62,16 @@ export default class App extends React.Component {
   }
 
   render() {
-    const { sideMenuOpen, activeTab } = this.state;
+    const { sideMenuOpen, activeTab, editId } = this.state;
     return (
       <Provider store={store}>
         <View style={styles.container}>
         {this.renderHeader()}
         {activeTab == 0 &&
-          <GradeEntry />
+          <GradeEntry editId={editId} />
         }
         {activeTab == 1 &&
-          <MyGrades />
+          <MyGrades setEditMode={(id) => this.setEditMode(id)}/>
         }
         <SideMenu
           open={sideMenuOpen}

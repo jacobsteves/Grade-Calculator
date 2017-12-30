@@ -11,14 +11,12 @@ export default function grade(state = initialState, action = {}) {
   let newState = state;
   switch (action.type) {
     case types.UPDATE_SAVE_WARNING:
-    console.log('1');
       // simply update the warning
       return {
         ...state,
         warning: action.data
       }
     case types.UPDATE_GRADE_LIBRARY:
-    console.log('2');
       // add our new object to library object
       newLibrary = newState.gradeLibrary;
       newLibrary.push(action.data);
@@ -31,13 +29,11 @@ export default function grade(state = initialState, action = {}) {
         gradeLibrary: newLibrary
       }
     case types.SAVE_GRADE_LIBRARY:
-    console.log('save');
       return {
         ...state,
         gradeLibrary: action.data
       }
     default:
-      console.log('default');
       return state;
   }
 }

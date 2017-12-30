@@ -17,9 +17,25 @@ import { saveGrade, updateSaveWarning } from '../actions/gradeActions.js';
 const screenSize = Dimensions.get('window').width;
 
 class GradeEntry extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+
+    let currentGradeArray = [{"grade":"","value":""}];
+    let editId = props.editId;
+    let className = "";
+    if (editId >= 0) {
+      for (i = 0; i < props.gradeLibrary.length; ++i) {
+        if (props.editId == props.gradeLibrary[i].id) {
+          currentGradeArray = props.gradeLibrary[i].grades;
+          className = props.gradeLibrary[i].class;
+        }
+      }
+    }
+
+    console.log(currentGradeArray);
+
     this.state = {
+      editId: editId,
       warning: "",
       calculated: false,
       grade: "0",
@@ -27,18 +43,33 @@ class GradeEntry extends React.Component {
       totalPercent: "0",
       neededGrade: "0",
       maxMark: "0",
-      className: "",
-      gradeArray: [{"grade":"","value":""}],
+      className: className,
+      gradeArray: currentGradeArray,
       gradeLibrary: []
     };
+
   }
 
   componentWillReceiveProps(nextProps) {
       if (nextProps.warning !== this.state.warning) {
         this.setState({warning: nextProps.warning});
       }
-      if (nextProps.gradeLibrary !== this.state.gradeLibrary) {
-        //this.setState({warning: "new library items"});
+      if (nextProps.editId !== this.state.editId) {
+        let currentGradeArray = [{"grade":"","value":""}];
+        let className = "";
+
+        for (i = 0; i < nextProps.gradeLibrary.length; ++i) {
+          if (nextProps.editId === nextProps.gradeLibrary[i].id) {
+            currentGradeArray = nextProps.gradeLibrary.grades;
+            className = props.gradeLibrary[i].class;
+          }
+        }
+
+        this.setState({
+          className: "",
+          editId: nextProps.editId,
+          gradeArray: currentGradeArray
+        });
       }
   }
 
@@ -85,7 +116,7 @@ class GradeEntry extends React.Component {
                 style={styles.textInput}
                 placeholder="0"
                 keyboardType="numeric"
-                onChangeText={(text)=> this.onChanged(i, false, text)}
+                onChangeText={(text) => this.onChanged(i, false, text)}
                 returnKeyType="done"
                 blurOnSubmit={true}
                 value={this.state.gradeArray[i].value}
@@ -142,7 +173,6 @@ class GradeEntry extends React.Component {
   saveGrade = () => {
     const { className, grade, gradeArray } = this.state;
     this.props.actions.saveGrade(className, grade, gradeArray);
-    //this.props.actions.updateSaveWarning("error!");
   }
 
   renderGoalView() {
@@ -176,12 +206,17 @@ class GradeEntry extends React.Component {
   }
 
   render() {
-    const { totalPercent, gradeGoal, neededGrade, calculated, maxMark, grade, className, warning } = this.state;
+    const { totalPercent, gradeGoal, neededGrade, calculated, maxMark, grade, className, warning, editId } = this.state;
     return (
       <View style={styles.container}>
       {(!calculated) &&
         <View style={{flex: 1}}>
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContainer}>
+              {(editId >= 0) &&
+                <View style={styles.row}>
+                  <Text style={styles.className}>{className}</Text>
+                </View>
+              }
               <View style={styles.row}>
                 <Text style={styles.title}>Grade</Text>
                 <Text style={styles.title}>Value</Text>
@@ -248,14 +283,6 @@ class GradeEntry extends React.Component {
 
 }
 
-/* <View style={styles.row}>
-  <TextInput
-      style={styles.classInput}
-      placeholder="Class name.."
-      onChangeText={(name) => this.setState({class: name})}
-      value={this.state.class}
-  />
-</View> */
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -278,6 +305,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     borderWidth: 0.5,
     borderColor: '#d6d7da',
+    textAlign: 'center',
   },
   textInputSpecial: {
     margin: 5,
@@ -367,6 +395,7 @@ const styles = StyleSheet.create({
     margin: 5,
     width: 60,
     fontSize: 18,
+    textAlign: 'center',
   },
   saveButton: {
     width: 60,
@@ -383,6 +412,10 @@ const styles = StyleSheet.create({
     justifyContent:'center',
     left: 0,
   },
+  className: {
+    fontSize: 22,
+    marginBottom: 10,
+  }
 });
 
 function mapStateToProps(state) {
