@@ -4,7 +4,8 @@ import {
     Text,
     View,
     TextInput,
-    ScrollView
+    ScrollView,
+    TouchableOpacity
 } from 'react-native';
 
 export default class App extends React.Component {
@@ -12,9 +13,16 @@ export default class App extends React.Component {
         super();
         this.state = {
             calculated: false,
-            grade: "0/0",
-            gradeArray: [{"grade":"0","value":"0"}]
+            grade: "0",
+            totalPercent: "0",
+            gradeArray: [{"grade":"","value":""}]
         };
+  }
+
+  componentDidMount(){
+    // for (i = 0; i < 25; ++i) {
+    //   this.addNewGrade();
+    // }
   }
 
   onChanged(position, gradeInput, text){
@@ -25,7 +33,10 @@ export default class App extends React.Component {
 
         for (var i=0; i < text.length; i++) {
             if(numbers.indexOf(text[i]) > -1 ) {
-                newText = newText + text[i];
+                // Dont let the first number be 0
+                if (!(i == 0 && text[i] == 0)) {
+                    newText = newText + text[i];
+                }
             }
             newNumber = newText;
         }
@@ -39,30 +50,32 @@ export default class App extends React.Component {
   renderTextInputs() {
     const gradeArray = this.state.gradeArray;
     return gradeArray.map((object, i) => {
-                return (
-                    <View key={i} style={styles.row}>
-                        <TextInput
-                            placeholder="0"
-                            keyboardType="numeric"
-                            onChangeText={(text)=> this.onChanged(i, true, text)}
-                            value={this.state.gradeArray[i].grade}
-                        />
-                        <TextInput
-                            placeholder="0"
-                            keyboardType="numeric"
-                            onChangeText={(text)=> this.onChanged(i, false, text)}
-                            value={this.state.gradeArray[i].value}
-                        />
-                    </View>
-                );
-        });
+        return (
+          <View key={i} style={styles.row}>
+            <TextInput
+                style={styles.textInput}
+                placeholder="0"
+                keyboardType="numeric"
+                onChangeText={(text)=> this.onChanged(i, true, text)}
+                value={this.state.gradeArray[i].grade}
+            />
+            <TextInput
+                style={styles.textInput}
+                placeholder="0"
+                keyboardType="numeric"
+                onChangeText={(text)=> this.onChanged(i, false, text)}
+                value={this.state.gradeArray[i].value}
+            />
+          </View>
+        );
+      });
   }
 
   addNewGrade() {
     let { gradeArray } = this.state;
     let newGrade = {
-        "grade": "0",
-        "value": "0"
+        "grade": "",
+        "value": ""
     };
     gradeArray.push(newGrade);
 
@@ -76,14 +89,15 @@ export default class App extends React.Component {
 
     gradeArray.forEach((object) => {
         if (object.value > 0) {
-            currentGrade += object.grade / (object.value / 100);
+            currentGrade += object.grade * (object.value / 100);
             totalPercent += object.value / 1;
         }
     });
 
     this.setState({
         calculated: true,
-        grade: currentGrade + " / " + totalPercent
+        totalPercent: totalPercent,
+        grade: currentGrade + "%"
     });
   }
 
@@ -91,14 +105,20 @@ export default class App extends React.Component {
     return (
       <View style={styles.container}>
       {(!this.state.calculated) &&
-        <ScrollView contentContainerStyle={{flexGrow: 1}}>
-            {this.renderTextInputs()}
-            <Text onPress={() => this.addNewGrade()}>Add a grade.</Text>
-            <Text onPress={() => this.calculateGrade()}>CALCULATE</Text>
-        </ScrollView>
+        <View style={{flex: 1}}>
+            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContainer}>
+                {this.renderTextInputs()}
+            </ScrollView>
+            <View style={styles.textRow}>
+                <TouchableOpacity style={styles.button} onPress={() => this.addNewGrade()}>
+                    <Text>Add a grade.</Text>
+                </TouchableOpacity>
+                <Text onPress={() => this.calculateGrade()}>CALCULATE</Text>
+            </View>
+        </View>
       }
       {this.state.calculated &&
-        <View>
+        <View style={styles.gradeBox}>
             <Text>{this.state.grade}</Text>
             <Text onPress={() => this.setState({calculated: false})}>Back</Text>
        </View>
@@ -113,9 +133,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: 2,
+    //alignItems: 'center',
+    //justifyContent: 'center',
+    //margin: 2,
+    padding: 20,
   },
   row: {
     flexWrap: 'wrap',
@@ -123,5 +144,40 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     margin: 2,
+    //backgroundColor: 'skyblue',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textRow: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textInput: {
+    width: 35,
+    borderRadius: 4,
+    borderWidth: 0.5,
+    borderColor: '#d6d7da',
+  },
+  gradeBox: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  scrollView: {
+    //width: 300,
+    flex: 1,
+    flexGrow: 1,
+    flexShrink: 1,
+    flexBasis: 1,
+  },
+  scrollViewContainer: {
+    //flex: 1,
+    //alignItems: 'center',
+    //justifyContent: 'center',
+    paddingBottom: 50,
+  },
+  button: {
+    alignItems: 'center',
+    backgroundColor: '#DDDDDD',
+    padding: 10
   },
 });
