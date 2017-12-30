@@ -48,7 +48,7 @@ export default class App extends React.Component {
             onPress={() => this.setState({sideMenuOpen: !this.state.sideMenuOpen})}
           />
         </View>
-        <Text style={{color: 'white'}}>GradeMe</Text>
+        <Text style={[styles.text, {color: 'white'}]}>GradeMe</Text>
       </View>
     );
   }
@@ -98,5 +98,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent:'center',
     left: 0,
-  }
+  },
+  text: {
+    fontSize: 18,
+  },
 });

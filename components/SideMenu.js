@@ -24,8 +24,8 @@ export default class SideMenu extends React.Component {
   slide = (toValue) => {
     Animated.spring(this.state.menuX, {
       toValue: toValue,
-      tension: 2,
-      friction: 8,
+      tension: 20,
+      //friction: 8,
     }).start();
     this.setState({
       visible: true,

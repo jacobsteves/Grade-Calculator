@@ -190,9 +190,9 @@ class GradeEntry extends React.Component {
             </ScrollView>
             <View style={styles.textRow}>
               <View style={styles.remainingBox}>
-                <Text style={styles.textBox}>What grade on the remaining percent do I need to get a:</Text>
+                <Text style={styles.text}>Goal Grade:</Text>
                 <TextInput
-                    style={styles.textInput}
+                    style={styles.textInputSpecial}
                     placeholder="0"
                     keyboardType="numeric"
                     onChangeText={(text)=> this.changeGradeGoal(text)}
@@ -202,10 +202,10 @@ class GradeEntry extends React.Component {
                 />
               </View>
               <TouchableOpacity style={styles.button} onPress={() => this.addNewGrade()}>
-                <Text style={{color: 'white'}}>Add a grade</Text>
+                <Text style={[styles.text, {color: 'white'}]}>Add a grade</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.specialButton} onPress={() => this.calculateGrade()}>
-                <Text style={{color: 'white'}}>CALCULATE</Text>
+                <Text style={[styles.text, {color: 'white'}]}>CALCULATE</Text>
               </TouchableOpacity>
             </View>
         </View>
@@ -213,14 +213,16 @@ class GradeEntry extends React.Component {
       {calculated &&
         <View style={styles.gradeBox}>
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContainer}>
-              <Text>Current Grade: {grade}%</Text>
-              <Text>Amount of Course Completed: {totalPercent}%</Text>
+              <Text style={styles.text}>Current Grade: {grade}%</Text>
+              <Text style={styles.text}>Amount of Course Completed: {totalPercent}%</Text>
               {this.renderGoalView()}
             </ScrollView>
             <View style={styles.textRow}>
-                <View style={styles.warningBox}>
-                  <Text>{warning}</Text>
-                </View>
+                {!!(warning) &&
+                  <View style={styles.warningBox}>
+                    <Text>{warning}</Text>
+                  </View>
+                }
               <View style={styles.remainingBox}>
                 <TextInput
                     style={styles.classInput}
@@ -232,10 +234,10 @@ class GradeEntry extends React.Component {
                 />
               </View>
               <TouchableOpacity style={styles.button} onPress={() => this.saveGrade()}>
-                <Text style={{color: 'white'}}>Save this grade</Text>
+                <Text style={[styles.text, {color: 'white'}]}>Save this grade</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.specialButton} onPress={() => this.setState({calculated: false})}>
-                <Text style={{color: 'white'}}>BACK</Text>
+                <Text style={[styles.text, {color: 'white'}]}>BACK</Text>
               </TouchableOpacity>
             </View>
        </View>
@@ -256,7 +258,8 @@ class GradeEntry extends React.Component {
 </View> */
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    paddingTop: 30,
   },
   row: {
     flexWrap: 'wrap',
@@ -269,16 +272,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  title: {
-    margin: 5,
-    width: 60,
-  },
   textInput: {
     margin: 5,
     width: 60,
     borderRadius: 4,
     borderWidth: 0.5,
     borderColor: '#d6d7da',
+  },
+  textInputSpecial: {
+    margin: 5,
+    width: 60,
+    borderRadius: 4,
+    borderWidth: 0.5,
+    borderColor: '#000',
+    textAlign: 'center',
   },
   classInput: {
     width: 130,
@@ -327,6 +334,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent:'center',
     flexWrap: 'wrap',
+    flexDirection: 'row',
   },
   button: {
     width: screenSize,
@@ -346,9 +354,19 @@ const styles = StyleSheet.create({
     width: 2 * screenSize / 3,
     marginLeft: 20,
     marginRight: 20,
+    fontSize: 18,
+  },
+  text: {
+    fontSize: 18,
   },
   gradeGoal: {
     marginTop: 20,
+    fontSize: 18,
+  },
+  title: {
+    margin: 5,
+    width: 60,
+    fontSize: 18,
   },
   saveButton: {
     width: 60,
@@ -364,7 +382,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent:'center',
     left: 0,
-  }
+  },
 });
 
 function mapStateToProps(state) {

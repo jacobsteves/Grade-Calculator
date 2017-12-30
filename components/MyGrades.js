@@ -138,48 +138,32 @@ class MyGrades extends React.Component {
     this.props.actions.saveGrade(className, grade, gradeArray);
   }
 
-  renderGoalView() {
-    let text;
-    const { totalPercent, gradeGoal, neededGrade, calculated, maxMark, grade } = this.state;
-
-    if (gradeGoal > 0 && totalPercent < 100 && 0 < neededGrade && neededGrade <= 100) {
-      text = (
-        <Text style={styles.gradeGoal}>
-          To reach a mark of {gradeGoal}%, you need {neededGrade}% on
-          the remaining {100 - totalPercent}%.
-        </Text>
-      );
-    }
-    else if (gradeGoal > 0 && totalPercent < 100 && neededGrade > 100) {
-      text = (
-        <Text style={styles.gradeGoal}>
-          Unfortunately, you cannot reach a mark of {gradeGoal}%, your maximum mark is {maxMark}%.
-        </Text>
-      );
-    }
-    else if (gradeGoal > 0 && totalPercent < 100 && neededGrade <= 0) {
-      text = (
-        <Text style={styles.gradeGoal}>
-          Congratulations! You've already reached your goal of {gradeGoal}%.
-        </Text>
-      );
-    }
-
-    return text;
-  }
-
   renderGradeRows() {
     const { gradeLibrary } = this.props;
-    return (
-      <View>
-        {gradeLibrary.map((object, i) => {
-            return (
-              <Text key={i}>{gradeLibrary[i].class}: {gradeLibrary[i].currentGrade}</Text>
-            );
-          })
-        }
-      </View>
-    )
+    let code;
+
+    if (gradeLibrary.length === 0) {
+        code = (
+            <View style={styles.noGradesView}>
+              <Text style={styles.text}>You have no saved grades!</Text>
+            </View>
+        )
+    } else {
+      code = (
+        <ScrollView style={styles.scrollView}>
+          {gradeLibrary.map((object, i) => {
+              return (
+                <TouchableOpacity key={i} style={(i % 2 == 0) ? styles.rowEven : styles.rowOdd}>
+                  <Text>{gradeLibrary[i].class}: {gradeLibrary[i].currentGrade}%.</Text>
+                </TouchableOpacity>
+              );
+            })
+          }
+        </ScrollView>
+      )
+    }
+
+    return code;
   }
 
   render() {
@@ -192,14 +176,6 @@ class MyGrades extends React.Component {
 
 }
 
-/* <View style={styles.row}>
-  <TextInput
-      style={styles.classInput}
-      placeholder="Class name.."
-      onChangeText={(name) => this.setState({class: name})}
-      value={this.state.class}
-  />
-</View> */
 const styles = StyleSheet.create({
   container: {
     flex: 1
@@ -266,7 +242,7 @@ const styles = StyleSheet.create({
     justifyContent:'center',
     flexWrap: 'wrap',
   },
-  remainingBox: {
+  rowEven: {
     width: screenSize,
     height: 50,
     backgroundColor: '#cccccc',
@@ -274,19 +250,13 @@ const styles = StyleSheet.create({
     justifyContent:'center',
     flexWrap: 'wrap',
   },
-  button: {
+  rowOdd: {
     width: screenSize,
     height: 50,
+    backgroundColor: '#dddddd',
     alignItems: 'center',
     justifyContent:'center',
-    backgroundColor: '#aaaaaa',
-  },
-  specialButton: {
-    width: screenSize,
-    height: 50,
-    alignItems: 'center',
-    justifyContent:'center',
-    backgroundColor: '#5889bd',
+    flexWrap: 'wrap',
   },
   textBox: {
     width: 2 * screenSize / 3,
@@ -296,21 +266,15 @@ const styles = StyleSheet.create({
   gradeGoal: {
     marginTop: 20,
   },
-  saveButton: {
-    width: 60,
-    height: 60,
-    position: 'absolute',
-    right: 0,
-    backgroundColor: '#cccccc',
-  },
-  hamburgerButton: {
-    width: 60,
-    height: 60,
-    position: 'absolute',
+  noGradesView: {
+    flex: 1,
     alignItems: 'center',
     justifyContent:'center',
-    left: 0,
-  }
+    flexWrap: 'wrap',
+  },
+  text: {
+    fontSize: 18,
+  },
 });
 
 function mapStateToProps(state) {
