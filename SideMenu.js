@@ -19,17 +19,19 @@ export default class SideMenu extends React.Component {
         {this.props.open &&
           <View style={styles.menu}>
             <View style={styles.elements}>
-              <TouchableOpacity>
-                <Text style={styles.element}>My Grades</Text>
-              </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => this.props.setActiveTab(0)}>
                 <Text style={styles.element}>Calculate Grades</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => this.props.setActiveTab(1)}>
+                <Text style={styles.element}>My Grades</Text>
               </TouchableOpacity>
             </View>
           </View>
         }
         {this.props.open &&
-          <View style={styles.overlay}></View>
+          <TouchableOpacity onPress={() => this.props.closeMenu()}>
+            <View style={styles.overlay}></View>
+          </TouchableOpacity>
         }
       </View>
     );

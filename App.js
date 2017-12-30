@@ -17,7 +17,15 @@ export default class App extends React.Component {
         super();
         this.state = {
             sideMenuOpen: false,
+            activeTab: 0,
         };
+  }
+
+  setActiveTab(tab) {
+      this.setState({
+        activeTab: tab,
+        sideMenuOpen: false,
+      });
   }
 
   renderHeader() {
@@ -37,12 +45,21 @@ export default class App extends React.Component {
   }
 
   render() {
-    const { sideMenuOpen } = this.state;
+    const { sideMenuOpen, activeTab } = this.state;
     return (
       <View style={styles.container}>
       {this.renderHeader()}
-      <GradeEntry />
-      <SideMenu open={sideMenuOpen} />
+      {activeTab == 0 &&
+        <GradeEntry />
+      }
+      {activeTab == 1 &&
+        <Text>Second Active Tab</Text>
+      }
+      <SideMenu
+        open={sideMenuOpen}
+        closeMenu={() => this.setState({sideMenuOpen: !this.state.sideMenuOpen})}
+        setActiveTab={(val) => this.setActiveTab(val)}
+      />
       </View>
     );
   }
