@@ -5,8 +5,11 @@ import {
     View,
     TextInput,
     ScrollView,
-    TouchableOpacity
+    TouchableOpacity,
+    Dimensions,
 } from 'react-native';
+
+const screenSize = Dimensions.get('window').width;
 
 export default class App extends React.Component {
   constructor() {
@@ -14,7 +17,9 @@ export default class App extends React.Component {
         this.state = {
             calculated: false,
             grade: "0",
+            gradeGoal: "0",
             totalPercent: "0",
+            neededGrade: "0",
             gradeArray: [{"grade":"","value":""}]
         };
   }
@@ -25,26 +30,29 @@ export default class App extends React.Component {
     // }
   }
 
-  onChanged(position, gradeInput, text){
-        var newText = '';
-        var numbers = '0123456789';
-        var newNumber = "";
-        var gradeArray = this.state.gradeArray;
+  changeGradeGoal(text) {
+    this.onChanged(0, 0, text, true);
+  }
 
-        for (var i=0; i < text.length; i++) {
-            if(numbers.indexOf(text[i]) > -1 ) {
-                // Dont let the first number be 0
-                if (!(i == 0 && text[i] == 0)) {
-                    newText = newText + text[i];
-                }
-            }
-            newNumber = newText;
-        }
+  onChanged(position, gradeInput, text, isGoalGrade = false) {
+      var newNumber = "";
+      var numbers = "0123456789.";
+      var { gradeArray, gradeGoal } = this.state;
 
-        if (gradeInput) gradeArray[position].grade = newNumber;
-        else gradeArray[position].value = newNumber;
+      for (var i=0; i < text.length; i++) {
+          if(numbers.indexOf(text[i]) > -1 ) {
+              // Dont let the first number be 0
+              if (!(i == 0 && text[i] == 0)) {
+                  newNumber = newNumber + text[i];
+              }
+          }
+      }
 
-        this.setState({ gradeArray: gradeArray });
+      if (isGoalGrade) gradeGoal = newNumber;
+      else if (gradeInput) gradeArray[position].grade = newNumber;
+      else gradeArray[position].value = newNumber;
+
+      this.setState({ gradeArray: gradeArray, gradeGoal: gradeGoal });
   }
 
   renderTextInputs() {
@@ -85,7 +93,8 @@ export default class App extends React.Component {
   calculateGrade() {
     let currentGrade = 0;
     let totalPercent = 0;
-    const { gradeArray } = this.state;
+    let neededGrade = 0;
+    const { gradeArray, gradeGoal } = this.state;
 
     gradeArray.forEach((object) => {
         if (object.value > 0) {
@@ -94,33 +103,71 @@ export default class App extends React.Component {
         }
     });
 
+    if (totalPercent < 100) {
+      neededGrade = 100 * (gradeGoal - currentGrade) / (100 - totalPercent);
+    }
+
     this.setState({
         calculated: true,
         totalPercent: totalPercent,
-        grade: currentGrade + "%"
+        grade: currentGrade.toFixed(2),
+        neededGrade: neededGrade.toFixed(2)
     });
   }
 
+  renderHeader() {
+    return (
+      <View style={styles.header}>
+        <Text style={{color: 'white'}}>GradeMe</Text>
+      </View>
+    );
+  }
   render() {
     return (
       <View style={styles.container}>
+      {this.renderHeader()}
       {(!this.state.calculated) &&
         <View style={{flex: 1}}>
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContainer}>
                 {this.renderTextInputs()}
             </ScrollView>
             <View style={styles.textRow}>
-                <TouchableOpacity style={styles.button} onPress={() => this.addNewGrade()}>
-                    <Text>Add a grade.</Text>
-                </TouchableOpacity>
-                <Text onPress={() => this.calculateGrade()}>CALCULATE</Text>
+              <View style={styles.remainingBox}>
+                <Text style={styles.textBox}>What grade on the remaining percent do I need to get a</Text>
+                <TextInput
+                    style={styles.textInput}
+                    placeholder="0"
+                    keyboardType="numeric"
+                    onChangeText={(text)=> this.changeGradeGoal(text)}
+                    value={this.state.gradeGoal}
+                />
+              </View>
+              <TouchableOpacity style={styles.button} onPress={() => this.addNewGrade()}>
+                <Text style={{color: 'white'}}>Add a grade.</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.specialButton} onPress={() => this.calculateGrade()}>
+                <Text style={{color: 'white'}}>CALCULATE</Text>
+              </TouchableOpacity>
             </View>
         </View>
       }
       {this.state.calculated &&
         <View style={styles.gradeBox}>
-            <Text>{this.state.grade}</Text>
-            <Text onPress={() => this.setState({calculated: false})}>Back</Text>
+            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContainer}>
+              <Text>Current Grade: {this.state.grade}%</Text>
+              <Text>Amount of Course Completed: {this.state.totalPercent}%</Text>
+              {(this.state.totalPercent < 100 && this.state.grade < this.state.gradeGoal) &&
+                <Text style={styles.gradeGoal}>
+                  To reach a mark of {this.state.gradeGoal}%, you need {this.state.neededGrade}% on
+                  the remaining {100 - this.state.totalPercent}%.
+                </Text>
+              }
+            </ScrollView>
+            <View style={styles.textRow}>
+              <TouchableOpacity style={styles.specialButton} onPress={() => this.setState({calculated: false})}>
+                <Text style={{color: 'white'}}>BACK</Text>
+              </TouchableOpacity>
+            </View>
        </View>
       }
       </View>
@@ -133,10 +180,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    //alignItems: 'center',
-    //justifyContent: 'center',
-    //margin: 2,
-    padding: 20,
   },
   row: {
     flexWrap: 'wrap',
@@ -144,7 +187,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     margin: 2,
-    //backgroundColor: 'skyblue',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -153,31 +195,63 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   textInput: {
-    width: 35,
+    width: 50,
     borderRadius: 4,
     borderWidth: 0.5,
     borderColor: '#d6d7da',
   },
   gradeBox: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   scrollView: {
-    //width: 300,
     flex: 1,
     flexGrow: 1,
     flexShrink: 1,
     flexBasis: 1,
   },
   scrollViewContainer: {
-    //flex: 1,
-    //alignItems: 'center',
-    //justifyContent: 'center',
     paddingBottom: 50,
   },
-  button: {
+  header: {
+    width: screenSize,
     alignItems: 'center',
-    backgroundColor: '#DDDDDD',
-    padding: 10
+    backgroundColor: '#2c445e',
+    padding: 20,
+    marginBottom: 20,
+  },
+  remainingBox: {
+    width: screenSize,
+    height: 50,
+    backgroundColor: '#cccccc',
+    justifyContent:'center',
+    flexWrap: 'wrap',
+    //flexDirection:'row',
+    //padding: 20,
+  },
+  button: {
+    width: screenSize,
+    height: 50,
+    alignItems: 'center',
+    justifyContent:'center',
+    backgroundColor: '#aaaaaa',
+    //padding: 20,
+  },
+  specialButton: {
+    width: screenSize,
+    height: 50,
+    alignItems: 'center',
+    justifyContent:'center',
+    backgroundColor: '#5889bd',
+    //padding: 20,
+  },
+  textBox: {
+    width: 2 * screenSize / 3,
+    marginLeft: 20,
+    marginRight: 20,
+  },
+  gradeGoal: {
+    marginTop: 20,
   },
 });
