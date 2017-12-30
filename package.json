@@ -22,6 +22,8 @@
     "expo": "^19.0.0",
     "react": "16.0.0-alpha.12",
     "react-native": "^0.46.1",
-    "react-native-hamburger": "0.0.2"
+    "react-native-hamburger": "0.0.2",
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.2.0"
   }
 }

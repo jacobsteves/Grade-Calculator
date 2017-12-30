@@ -6,11 +6,20 @@ import {
     TouchableOpacity,
     Dimensions,
 } from 'react-native';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
+import thunk from 'redux-thunk';
 import Hamburger from 'react-native-hamburger';
-import GradeEntry from './GradeEntry';
-import SideMenu from './SideMenu';
+import GradeEntry from './components/GradeEntry';
+import SideMenu from './components/SideMenu';
+import MyGrades from './components/MyGrades';
+import * as reducers from './reducers';
 
 const screenSize = Dimensions.get('window').width;
+
+const createStoreWithMiddleware = compose(applyMiddleware(thunk)(createStore));
+const reducer = combineReducers(reducers);
+const store = createStoreWithMiddleware(reducer);
 
 export default class App extends React.Component {
   constructor() {
@@ -47,20 +56,22 @@ export default class App extends React.Component {
   render() {
     const { sideMenuOpen, activeTab } = this.state;
     return (
-      <View style={styles.container}>
-      {this.renderHeader()}
-      {activeTab == 0 &&
-        <GradeEntry />
-      }
-      {activeTab == 1 &&
-        <Text>Second Active Tab</Text>
-      }
-      <SideMenu
-        open={sideMenuOpen}
-        closeMenu={() => this.setState({sideMenuOpen: !this.state.sideMenuOpen})}
-        setActiveTab={(val) => this.setActiveTab(val)}
-      />
-      </View>
+      <Provider store={store}>
+        <View style={styles.container}>
+        {this.renderHeader()}
+        {activeTab == 0 &&
+          <GradeEntry />
+        }
+        {activeTab == 1 &&
+          <MyGrades />
+        }
+        <SideMenu
+          open={sideMenuOpen}
+          closeMenu={() => this.setState({sideMenuOpen: !this.state.sideMenuOpen})}
+          setActiveTab={(val) => this.setActiveTab(val)}
+        />
+        </View>
+      </Provider>
     );
   }
 
