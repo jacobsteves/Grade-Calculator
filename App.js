@@ -20,6 +20,7 @@ export default class App extends React.Component {
             gradeGoal: "0",
             totalPercent: "0",
             neededGrade: "0",
+            maxMark: "0",
             gradeArray: [{"grade":"","value":""}]
         };
   }
@@ -94,6 +95,7 @@ export default class App extends React.Component {
     let currentGrade = 0;
     let totalPercent = 0;
     let neededGrade = 0;
+    let maxMark = 0;
     const { gradeArray, gradeGoal } = this.state;
 
     gradeArray.forEach((object) => {
@@ -104,14 +106,20 @@ export default class App extends React.Component {
     });
 
     if (totalPercent < 100) {
-      neededGrade = 100 * (gradeGoal - currentGrade) / (100 - totalPercent);
+      let remainingPercent = 100 - totalPercent;
+
+      neededGrade = 100 * (gradeGoal - currentGrade) / remainingPercent;
+      maxMark = currentGrade + remainingPercent
+    } else {
+      maxMark = currentGrade;
     }
 
     this.setState({
         calculated: true,
         totalPercent: totalPercent,
         grade: currentGrade.toFixed(2),
-        neededGrade: neededGrade.toFixed(2)
+        neededGrade: neededGrade.toFixed(2),
+        maxMark: maxMark.toFixed(2)
     });
   }
 
@@ -123,27 +131,32 @@ export default class App extends React.Component {
     );
   }
   render() {
+    const { totalPercent, gradeGoal, neededGrade, calculated, maxMark, grade } = this.state;
     return (
       <View style={styles.container}>
       {this.renderHeader()}
-      {(!this.state.calculated) &&
+      {(!calculated) &&
         <View style={{flex: 1}}>
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContainer}>
-                {this.renderTextInputs()}
+              <View style={styles.row}>
+                <Text style={styles.title}>Grade</Text>
+                <Text style={styles.title}>Value</Text>
+              </View>
+              {this.renderTextInputs()}
             </ScrollView>
             <View style={styles.textRow}>
               <View style={styles.remainingBox}>
-                <Text style={styles.textBox}>What grade on the remaining percent do I need to get a</Text>
+                <Text style={styles.textBox}>What grade on the remaining percent do I need to get a:</Text>
                 <TextInput
                     style={styles.textInput}
                     placeholder="0"
                     keyboardType="numeric"
                     onChangeText={(text)=> this.changeGradeGoal(text)}
-                    value={this.state.gradeGoal}
+                    value={gradeGoal}
                 />
               </View>
               <TouchableOpacity style={styles.button} onPress={() => this.addNewGrade()}>
-                <Text style={{color: 'white'}}>Add a grade.</Text>
+                <Text style={{color: 'white'}}>Add a grade</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.specialButton} onPress={() => this.calculateGrade()}>
                 <Text style={{color: 'white'}}>CALCULATE</Text>
@@ -151,15 +164,25 @@ export default class App extends React.Component {
             </View>
         </View>
       }
-      {this.state.calculated &&
+      {calculated &&
         <View style={styles.gradeBox}>
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContainer}>
-              <Text>Current Grade: {this.state.grade}%</Text>
-              <Text>Amount of Course Completed: {this.state.totalPercent}%</Text>
-              {(this.state.totalPercent < 100 && this.state.grade < this.state.gradeGoal) &&
+              <Text>Current Grade: {grade}%</Text>
+              <Text>Amount of Course Completed: {totalPercent}%</Text>
+              {(totalPercent < 100 && 0 < neededGrade && neededGrade <= 100) &&
                 <Text style={styles.gradeGoal}>
-                  To reach a mark of {this.state.gradeGoal}%, you need {this.state.neededGrade}% on
-                  the remaining {100 - this.state.totalPercent}%.
+                  To reach a mark of {gradeGoal}%, you need {neededGrade}% on
+                  the remaining {100 - totalPercent}%.
+                </Text>
+              }
+              {(totalPercent < 100 && neededGrade > 100) &&
+                <Text style={styles.gradeGoal}>
+                  Unfortunately, you cannot reach a mark of {gradeGoal}%, your maximum mark is {maxMark}%.
+                </Text>
+              }
+              {(totalPercent < 100 && neededGrade <= 0) &&
+                <Text style={styles.gradeGoal}>
+                  Congratulations! You've already reached your goal of {gradeGoal}%.
                 </Text>
               }
             </ScrollView>
@@ -187,15 +210,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     margin: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   textRow: {
     alignItems: 'center',
     justifyContent: 'center',
   },
+  title: {
+    margin: 5,
+    width: 60,
+  },
   textInput: {
-    width: 50,
+    margin: 5,
+    width: 60,
     borderRadius: 4,
     borderWidth: 0.5,
     borderColor: '#d6d7da',
