@@ -138,42 +138,49 @@ class MyGrades extends React.Component {
     this.props.actions.saveGrade(className, grade, gradeArray);
   }
 
+  renderGradeRow() {
+    const { gradeLibrary } = this.props;
+
+    return (
+      <TouchableOpacity
+        key={i}
+        onPress={() => this.props.setEditMode(gradeLibrary[i].id)}
+        style={(i % 2 == 0) ? styles.rowEven : styles.rowOdd}
+        >
+        <Text>{gradeLibrary[i].class}: {gradeLibrary[i].currentGrade}%.</Text>
+      </TouchableOpacity>
+    );
+  }
+
   renderGradeRows() {
     const { gradeLibrary } = this.props;
-    let code;
 
-    if (gradeLibrary.length === 0) {
-        code = (
-            <View style={styles.noGradesView}>
-              <Text style={styles.text}>You have no saved grades!</Text>
-            </View>
-        )
-    } else {
-      code = (
-        <ScrollView style={styles.scrollView}>
-          {gradeLibrary.map((object, i) => {
-              return (
-                <TouchableOpacity
-                  key={i}
-                  onPress={() => this.props.setEditMode(gradeLibrary[i].id)}
-                  style={(i % 2 == 0) ? styles.rowEven : styles.rowOdd}
-                  >
-                  <Text>{gradeLibrary[i].class}: {gradeLibrary[i].currentGrade}%.</Text>
-                </TouchableOpacity>
-              );
-            })
-          }
-        </ScrollView>
-      )
-    }
+    return (
+      <ScrollView style={styles.scrollView}>
+        {gradeLibrary.map((object, i) => { return renderGradeRow() })}
+      </ScrollView>
+    )
+  }
 
-    return code;
+  renderNoSavedGrades() {
+    return (
+      <View style={styles.noGradesView}>
+        <Text style={styles.text}>You have no saved grades!</Text>
+      </View>
+    )
+  }
+
+  renderGrades() {
+    const { gradeLibrary } = this.props;
+
+    if (gradeLibrary.length === 0) return renderNoSavedGrades();
+    return renderGradeRows();
   }
 
   render() {
     return (
       <View style={styles.container}>
-        {this.renderGradeRows()}
+        {this.renderGrades()}
       </View>
     );
   }
