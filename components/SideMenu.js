@@ -39,31 +39,44 @@ export default class SideMenu extends React.Component {
     }
   }
 
+  renderTabs() {
+    return (
+      <View style={styles.elements}>
+        <TouchableOpacity onPress={() => this.props.setActiveTab(0)}>
+          <Text style={styles.element}>Calculate Grades</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => this.props.setActiveTab(1)}>
+          <Text style={styles.element}>My Grades</Text>
+        </TouchableOpacity>
+      </View>
+    )
+  }
+
+  renderSlideOutMenu() {
+    return (
+      <Animated.View
+        style={[styles.menu, {transform: [{ translateX: this.state.menuX }]}]}
+        >
+        {this.renderTabs()}
+      </Animated.View>
+    )
+  }
+
+  renderScreenOverlay() {
+    return (
+      {this.props.open &&
+        <TouchableOpacity onPress={() => this.props.closeMenu()}>
+          <View style={styles.overlay}></View>
+        </TouchableOpacity>
+      }
+    )
+  }
+
   render() {
     return (
       <View style={this.props.open ? styles.container : styles.none}>
-        <Animated.View
-          style={[styles.menu, {
-            transform: [
-            {
-              translateX: this.state.menuX
-            }]
-          }]}
-          >
-            <View style={styles.elements}>
-              <TouchableOpacity onPress={() => this.props.setActiveTab(0)}>
-                <Text style={styles.element}>Calculate Grades</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => this.props.setActiveTab(1)}>
-                <Text style={styles.element}>My Grades</Text>
-              </TouchableOpacity>
-            </View>
-          </Animated.View>
-        {this.props.open &&
-          <TouchableOpacity onPress={() => this.props.closeMenu()}>
-            <View style={styles.overlay}></View>
-          </TouchableOpacity>
-        }
+        {this.renderSlideOutMenu()}
+        {this.renderScreenOverlay()}
       </View>
     );
   }
