@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import styles from '../stylesheets/GradeEntryStyles'
 import Hamburger from 'react-native-hamburger';
+import Modal from "react-native-modal";
 
 import { saveGrade, updateSaveWarning } from '../actions/gradeActions.js';
 
@@ -46,7 +47,9 @@ class GradeEntry extends React.Component {
       maxMark: "0",
       className: className,
       gradeArray: currentGradeArray,
-      gradeLibrary: []
+      gradeLibrary: [],
+      tagArray: [],
+      newTag: ""
     };
 
   }
@@ -206,10 +209,74 @@ class GradeEntry extends React.Component {
     return text;
   }
 
+  toggleModal = () => {
+    this.setState({ saveGradeModalOpen: !this.state.saveGradeModalOpen });
+  }
+
+  saveTagInput() {
+    const { tagArray, newTag } = this.state;
+    tagArray.push(newTag);
+
+    this.setState({
+      tagArray: tagArray,
+      newTag: ""
+    })
+  }
+
+  renderCurrentTags() {
+    const { tagArray } = this.state;
+    return (
+      <View>
+        {tagArray.map((tag, i) => { return <Text key={i}>{tag}</Text> })}
+      </View>
+    )
+  }
+
+  renderModalButtons() {
+    return (
+      <TouchableOpacity onPress={() => this.toggleModal()}>
+        <Text>Cancel</Text>
+      </TouchableOpacity>
+    )
+  }
+
+  renderSaveGradeModal() {
+    const { saveGradeModalOpen, tagArray, className, newTag } = this.state;
+      return (
+        <Modal
+          isVisible={saveGradeModalOpen}
+          onBackdropPress={() => this.setState({ saveGradeModalOpen: false })}
+          >
+          <View style={styles.saveGradeModal}>
+            <TextInput
+                style={styles.classInput}
+                placeholder="Class name..."
+                onChangeText={(text)=> this.setState({className: text})}
+                returnKeyType="done"
+                blurOnSubmit={true}
+                value={className}
+            />
+            <TextInput
+                style={styles.classInput}
+                placeholder="Add a tag..."
+                onChangeText={(tag)=> this.setState({newTag: tag})}
+                onSubmitEditing={() => this.saveTagInput()}
+                returnKeyType="done"
+                blurOnSubmit={true}
+                value={newTag}
+            />
+            {this.renderCurrentTags()}
+            {this.renderModalButtons()}
+          </View>
+        </Modal>
+      )
+  }
+
   render() {
     const { totalPercent, gradeGoal, neededGrade, calculated, maxMark, grade, className, warning, editId } = this.state;
     return (
       <View style={styles.container}>
+        {this.renderSaveGradeModal()}
       {(!calculated) &&
         <View style={{flex: 1}}>
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContainer}>
@@ -259,17 +326,7 @@ class GradeEntry extends React.Component {
                     <Text>{warning}</Text>
                   </View>
                 }
-              <View style={styles.remainingBox}>
-                <TextInput
-                    style={styles.classInput}
-                    placeholder="Class name..."
-                    onChangeText={(text)=> this.setState({className: text})}
-                    returnKeyType="done"
-                    blurOnSubmit={true}
-                    value={className}
-                />
-              </View>
-              <TouchableOpacity style={styles.button} onPress={() => this.saveGrade()}>
+              <TouchableOpacity style={styles.button} onPress={() => this.toggleModal()}>
                 <Text style={[styles.text, {color: 'white'}]}>Save this grade</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.specialButton} onPress={() => this.setState({calculated: false})}>

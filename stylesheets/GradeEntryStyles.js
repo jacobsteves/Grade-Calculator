@@ -136,5 +136,22 @@ export default StyleSheet.create({
   className: {
     fontSize: 22,
     marginBottom: 10,
-  }
+  },
+  saveGradeModal: {
+    backgroundColor: "white",
+    padding: 22,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 4,
+    borderColor: "rgba(0, 0, 0, 0.1)"
+  },
+  saveGradeModalButton: {
+    backgroundColor: "lightblue",
+    padding: 12,
+    margin: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 4,
+    borderColor: "rgba(0, 0, 0, 0.1)"
+  },
 });

@@ -137,7 +137,7 @@ class MyGrades extends React.Component {
     this.props.actions.saveGrade(className, grade, gradeArray);
   }
 
-  renderGradeRow() {
+  renderGradeRow(object, i) {
     const { gradeLibrary } = this.props;
 
     return (
@@ -156,7 +156,7 @@ class MyGrades extends React.Component {
 
     return (
       <ScrollView style={styles.scrollView}>
-        {gradeLibrary.map((object, i) => { return renderGradeRow() })}
+        {gradeLibrary.map((object, i) => { return renderGradeRow(object, i) })}
       </ScrollView>
     )
   }
