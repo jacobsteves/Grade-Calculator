@@ -13,6 +13,7 @@ import {
 import styles from '../stylesheets/GradeEntryStyles'
 import Hamburger from 'react-native-hamburger';
 import Modal from "react-native-modal";
+import MultiSelect from 'react-native-multiple-select';
 
 import { saveGrade, updateSaveWarning } from '../actions/gradeActions.js';
 
@@ -48,7 +49,17 @@ class GradeEntry extends React.Component {
       className: className,
       gradeArray: currentGradeArray,
       gradeLibrary: [],
-      tagArray: [],
+      tagArray: [{
+        id: '92iijs7yta',
+        name: 'Major',
+      }, {
+        id: 'a0s0a8ssbsd',
+        name: 'Minor',
+      }, {
+        id: '16hbajsabsd',
+        name: 'MATH',
+      },],
+      selectedTags: [],
       newTag: ""
     };
 
@@ -213,21 +224,37 @@ class GradeEntry extends React.Component {
     this.setState({ saveGradeModalOpen: !this.state.saveGradeModalOpen });
   }
 
-  saveTagInput() {
-    const { tagArray, newTag } = this.state;
-    tagArray.push(newTag);
-
-    this.setState({
-      tagArray: tagArray,
-      newTag: ""
-    })
-  }
+  onSelectedItemsChange = selectedTags => {
+    this.setState({ selectedTags });
+  };
 
   renderCurrentTags() {
-    const { tagArray } = this.state;
+    const { tagArray, selectedTags } = this.state;
     return (
-      <View>
-        {tagArray.map((tag, i) => { return <Text key={i}>{tag}</Text> })}
+      <View style={{ width: 200, height: 300 }}>
+        <MultiSelect
+          hideTags
+          items={tagArray}
+          uniqueKey="id"
+          ref={(component) => { this.multiSelect = component }}
+          onSelectedItemsChange={this.onSelectedItemsChange}
+          selectedItems={selectedTags}
+          selectText="Pick Tags"
+          searchInputPlaceholderText="Search Tags..."
+          tagRemoveIconColor="#CCC"
+          tagBorderColor="#CCC"
+          tagTextColor="#CCC"
+          selectedItemTextColor="#CCC"
+          selectedItemIconColor="#CCC"
+          itemTextColor="#000"
+          displayKey="name"
+          searchInputStyle={{ color: '#CCC' }}
+          submitButtonColor="#CCC"
+          submitButtonText="Submit"
+        />
+        <View>
+          {this.multiSelect && this.multiSelect.getSelectedItemsExt(selectedTags)}
+        </View>
       </View>
     )
   }
@@ -255,15 +282,6 @@ class GradeEntry extends React.Component {
                 returnKeyType="done"
                 blurOnSubmit={true}
                 value={className}
-            />
-            <TextInput
-                style={styles.classInput}
-                placeholder="Add a tag..."
-                onChangeText={(tag)=> this.setState({newTag: tag})}
-                onSubmitEditing={() => this.saveTagInput()}
-                returnKeyType="done"
-                blurOnSubmit={true}
-                value={newTag}
             />
             {this.renderCurrentTags()}
             {this.renderModalButtons()}
