@@ -10,12 +10,10 @@ import {
     TouchableOpacity,
     Dimensions,
 } from 'react-native';
-import { styles } from '../stylesheets/MyGradesStyles'
+import styles from '../stylesheets/MyGradesStyles'
 import Hamburger from 'react-native-hamburger';
 
 import { getGrades } from '../actions/gradeActions.js';
-
-const screenSize = Dimensions.get('window').width;
 
 class MyGrades extends React.Component {
   constructor() {
@@ -174,8 +172,8 @@ class MyGrades extends React.Component {
   renderGrades() {
     const { gradeLibrary } = this.props;
 
-    if (gradeLibrary.length === 0) return renderNoSavedGrades();
-    return renderGradeRows();
+    if (gradeLibrary.length === 0) return this.renderNoSavedGrades();
+    return this.renderGradeRows();
   }
 
   render() {

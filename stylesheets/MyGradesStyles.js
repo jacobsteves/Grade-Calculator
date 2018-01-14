@@ -1,7 +1,10 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 
-const styles = StyleSheet.create({
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
+
+export default StyleSheet.create({
   container: {
     flex: 1
   },
@@ -52,7 +55,7 @@ const styles = StyleSheet.create({
     paddingBottom: 50,
   },
   header: {
-    width: screenSize,
+    width: screenWidth,
     height: 60,
     alignItems: 'center',
     backgroundColor: '#2c445e',
@@ -60,7 +63,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   warningBox: {
-    width: screenSize,
+    width: screenWidth,
     height: 50,
     backgroundColor: '#b52e2b',
     alignItems: 'center',
@@ -68,7 +71,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   rowEven: {
-    width: screenSize,
+    width: screenWidth,
     height: 50,
     backgroundColor: '#cccccc',
     alignItems: 'center',
@@ -76,7 +79,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   rowOdd: {
-    width: screenSize,
+    width: screenWidth,
     height: 50,
     backgroundColor: '#dddddd',
     alignItems: 'center',
@@ -84,7 +87,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   textBox: {
-    width: 2 * screenSize / 3,
+    width: 2 * screenWidth / 3,
     marginLeft: 20,
     marginRight: 20,
   },
@@ -101,5 +104,3 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
 });
-
-module.exports = styles;

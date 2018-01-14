@@ -1,7 +1,10 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 
-const styles = StyleSheet.create({
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
+
+export default StyleSheet.create({
   container: {
     zIndex: 1,
     flex: 1,
@@ -43,5 +46,3 @@ const styles = StyleSheet.create({
     fontSize: 20,
   }
 });
-
-module.exports = styles;

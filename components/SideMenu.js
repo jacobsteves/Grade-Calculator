@@ -1,4 +1,4 @@
-import React from 'react';
+ import React from 'react';
 import {
     StyleSheet,
     Text,
@@ -9,10 +9,7 @@ import {
     Dimensions,
     Animated,
 } from 'react-native';
-import { styles } from '../stylesheets/SideMenuStyles'
-
-const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get('window').height;
+import styles from '../stylesheets/SideMenuStyles'
 
 export default class SideMenu extends React.Component {
   constructor() {
@@ -63,13 +60,13 @@ export default class SideMenu extends React.Component {
   }
 
   renderScreenOverlay() {
-    return (
-      {this.props.open &&
-        <TouchableOpacity onPress={() => this.props.closeMenu()}>
-          <View style={styles.overlay}></View>
-        </TouchableOpacity>
-      }
-    )
+    if (this.props.open) {
+      return (
+          <TouchableOpacity onPress={() => this.props.closeMenu()}>
+            <View style={styles.overlay}></View>
+          </TouchableOpacity>
+      )
+    }
   }
 
   render() {

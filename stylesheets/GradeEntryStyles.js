@@ -1,7 +1,10 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 
-const styles = StyleSheet.create({
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
+
+export default StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 30,
@@ -58,7 +61,7 @@ const styles = StyleSheet.create({
     paddingBottom: 50,
   },
   header: {
-    width: screenSize,
+    width: screenWidth,
     height: 60,
     alignItems: 'center',
     backgroundColor: '#2c445e',
@@ -66,7 +69,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   warningBox: {
-    width: screenSize,
+    width: screenWidth,
     height: 50,
     backgroundColor: '#b52e2b',
     alignItems: 'center',
@@ -74,7 +77,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   remainingBox: {
-    width: screenSize,
+    width: screenWidth,
     height: 50,
     backgroundColor: '#cccccc',
     alignItems: 'center',
@@ -83,21 +86,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   button: {
-    width: screenSize,
+    width: screenWidth,
     height: 50,
     alignItems: 'center',
     justifyContent:'center',
     backgroundColor: '#aaaaaa',
   },
   specialButton: {
-    width: screenSize,
+    width: screenWidth,
     height: 50,
     alignItems: 'center',
     justifyContent:'center',
     backgroundColor: '#5889bd',
   },
   textBox: {
-    width: 2 * screenSize / 3,
+    width: 2 * screenWidth / 3,
     marginLeft: 20,
     marginRight: 20,
     fontSize: 18,
@@ -135,5 +138,3 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   }
 });
-
-module.exports = styles;

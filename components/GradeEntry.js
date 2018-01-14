@@ -10,7 +10,7 @@ import {
     TouchableOpacity,
     Dimensions,
 } from 'react-native';
-import { styles } from '../stylesheets/GradeEntryStyles'
+import styles from '../stylesheets/GradeEntryStyles'
 import Hamburger from 'react-native-hamburger';
 
 import { saveGrade, updateSaveWarning } from '../actions/gradeActions.js';
