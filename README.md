@@ -32,3 +32,11 @@ exp detach
 ```
 
 3. Now you can develop platform specifically, and push ios/android builds
+
+## Versioning
+
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/jacobsteves/Grade-Calculator/tags). 
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
