@@ -39,6 +39,7 @@ export default class SideMenu extends React.Component {
   renderTabs() {
     return (
       <View style={styles.elements}>
+          <View style={{ height: this.props.appSpacerHeader }} />
         <TouchableOpacity onPress={() => this.props.setActiveTab(0)}>
           <Text style={styles.element}>Calculate Grades</Text>
         </TouchableOpacity>
@@ -72,8 +73,8 @@ export default class SideMenu extends React.Component {
   render() {
     return (
       <View style={this.props.open ? styles.container : styles.none}>
-        {this.renderSlideOutMenu()}
-        {this.renderScreenOverlay()}
+          {this.renderSlideOutMenu()}
+          {this.renderScreenOverlay()}
       </View>
     );
   }

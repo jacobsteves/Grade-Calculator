@@ -5,7 +5,9 @@
     "version": "1.0.0",
     "slug": "grade-calculator",
     "ios": {
-      "bundleIdentifier": "ca.jacobsteves.grade-calculator"
+      "bundleIdentifier": "ca.jacobsteves.grade-calculator",
+      "publishBundlePath": "ios/grade-calculator/Supporting/shell-app.bundle",
+      "publishManifestPath": "ios/grade-calculator/Supporting/shell-app-manifest.json"
     },
     "isDetached": true,
     "detach": {
@@ -15,7 +17,9 @@
     },
     "scheme": "exp0f9a02727be942ec883a032fd393a0d7",
     "android": {
-      "package": "ca.jacobsteves.grade_calculator"
+      "package": "ca.jacobsteves.grade_calculator",
+      "publishBundlePath": "android/app/src/main/assets/shell-app.bundle",
+      "publishManifestPath": "android/app/src/main/assets/shell-app-manifest.json"
     }
   }
 }
