@@ -5,7 +5,9 @@ import {
     View,
     TouchableOpacity,
     Dimensions,
+    Platform
 } from 'react-native';
+import { Constants } from 'expo';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 import thunk from 'redux-thunk';
@@ -31,7 +33,12 @@ export default class App extends React.Component {
         };
   }
 
+  componentDidMount() {
+      this.getSafeAreaHeader();
+  }
+
   setActiveTab(tab) {
+      console.log("set active tab: ", tab);
       this.setState({
         editId: -1,
         activeTab: tab,
@@ -53,7 +60,10 @@ export default class App extends React.Component {
             active={this.state.sideMenuOpen}
             type="spinCross"
             color="#cccccc"
-            onPress={() => this.setState({sideMenuOpen: !this.state.sideMenuOpen})}
+            onPress={() => {
+                console.log("Press");
+                this.setState({sideMenuOpen: !this.state.sideMenuOpen})
+            }}
           />
         </View>
         <Text style={[styles.text, {color: 'white'}]}>GradeMe</Text>
@@ -61,24 +71,41 @@ export default class App extends React.Component {
     );
   }
 
+  getSafeAreaHeader() {
+      if (Platform.OS == "android") {
+          this.setState({
+              appSpacerHeader: Constants.statusBarHeight
+          });
+      } else {
+          if (Constants.statusBarHeight > 20) {
+              this.setState({
+                  appSpacerHeader: Constants.statusBarHeight - 10
+              });
+          }
+      }
+      console.log(Constants.statusBarHeight);
+  }
+
   render() {
-    const { sideMenuOpen, activeTab, editId } = this.state;
+    const { sideMenuOpen, activeTab, editId, appSpacerHeader } = this.state;
     return (
       <Provider store={store}>
-        <View style={styles.container}>
-        {this.renderHeader()}
-        {activeTab == 0 &&
-          <GradeEntry editId={editId} />
-        }
-        {activeTab == 1 &&
-          <MyGrades setEditMode={(id) => this.setEditMode(id)}/>
-        }
-        <SideMenu
-          open={sideMenuOpen}
-          closeMenu={() => this.setState({sideMenuOpen: !this.state.sideMenuOpen})}
-          setActiveTab={(val) => this.setActiveTab(val)}
-        />
-        </View>
+          <View style={styles.container}>
+              <View style={{ height: appSpacerHeader }} />
+              {this.renderHeader()}
+              {activeTab == 0 &&
+                <GradeEntry editId={editId} />
+              }
+              {activeTab == 1 &&
+                <MyGrades setEditMode={(id) => this.setEditMode(id)}/>
+              }
+              <SideMenu
+                  appSpacerHeader={appSpacerHeader}
+                  open={sideMenuOpen}
+                  closeMenu={() => this.setState({sideMenuOpen: !this.state.sideMenuOpen})}
+                  setActiveTab={(val) => this.setActiveTab(val)}
+              />
+          </View>
       </Provider>
     );
   }

@@ -273,10 +273,11 @@ class GradeEntry extends React.Component {
   }
 
   renderSaveGradeModal() {
-    const { saveGradeModalOpen, tagArray, className, newTag } = this.state;
+      if (!this.state.saveGradeModalOpen) return <View></View>;
       return (
         <Modal
-          isVisible={saveGradeModalOpen}
+          isVisible={this.state.saveGradeModalOpen}
+          backdropOpacity={0.9}
           onBackdropPress={() => this.setState({ saveGradeModalOpen: false })}
           >
           <View style={styles.saveGradeModal}>
@@ -286,7 +287,7 @@ class GradeEntry extends React.Component {
                 onChangeText={(text)=> this.setState({className: text})}
                 returnKeyType="done"
                 blurOnSubmit={true}
-                value={className}
+                value={this.state.className}
             />
             {this.renderCurrentTags()}
             {this.renderModalButtons()}
