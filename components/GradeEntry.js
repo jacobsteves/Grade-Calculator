@@ -212,7 +212,7 @@ class GradeEntry extends React.Component {
     else if (gradeGoal > 0 && totalPercent < 100 && neededGrade <= 0) {
       text = (
         <Text style={styles.gradeGoal}>
-          Congratulations! You've already reached your goal of {gradeGoal}%.
+          Congratulations! You have already reached your goal of {gradeGoal}%.
         </Text>
       );
     }
@@ -261,9 +261,14 @@ class GradeEntry extends React.Component {
 
   renderModalButtons() {
     return (
-      <TouchableOpacity onPress={() => this.toggleModal()}>
-        <Text>Cancel</Text>
-      </TouchableOpacity>
+      <View>
+        <TouchableOpacity onPress={() => this.saveGrade()}>
+          <Text>Save</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => this.toggleModal()}>
+          <Text>Cancel</Text>
+        </TouchableOpacity>
+      </View>
     )
   }
 
